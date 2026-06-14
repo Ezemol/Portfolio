@@ -1,0 +1,126 @@
+# Portfolio Project Technical Documentation & User Guide
+
+This file provides a detailed walkthrough of the portfolio architecture, explaining how each component works, where to find labels/data, and how to update projects, blog posts, and your personal assets.
+
+---
+
+## 0. Running the Project (Local Server)
+
+Since this site dynamically fetches portfolio data (`projects.json` and `posts.json`), running it directly from the file system (e.g. double-clicking `index.html`) will fail due to browser CORS policies. You must run a local server.
+
+To start the page, run:
+```bash
+npx -y http-server
+```
+Once started, view the page at:
+`http://127.0.0.1:8080`
+
+---
+
+## 1. Project Architecture (How It Works)
+
+The project is built as a single-page application (SPA) using HTML, CSS (Tailwind via CDN), and vanilla JavaScript. Instead of reloading the page or relying on heavy frameworks, all interactions and page changes happen dynamically in the browser.
+
+### The Files Created:
+1. **`index.html`**: Contains the core layout, SEO metadata, navigation bars (both desktop and mobile hamburger), the main SPA container sections, and empty placeholder divs where JavaScript injects content.
+2. **`app.js`**: Contains all page logic:
+   * **SPA Routing**: Listens for click events on nav buttons and toggles the CSS `.hidden` class on the sections. It also resets a custom Tailwind slide-up animation whenever a page is shown.
+   * **Dynamic Loading**: Uses asynchronous `fetch()` requests to load the content from the two JSON files dynamically.
+   * **YouTube Parser**: Automatically detects standard YouTube watch links (e.g., `youtube.com/watch?v=...` or `youtu.be/...`) and formats them into an `/embed/...` URL for rendering securely within responsive `<iframe>` elements.
+   * **Fallback Rendering**: If a project doesn't have a `video_url` in the JSON, it dynamically builds an animated, eye-catching Tailwind gradient card stating "Demo coming soon".
+3. **`projects.json`**: A structured database containing array items for your projects.
+4. **`posts.json`**: A structured database containing array items for your blog posts.
+
+---
+
+## 2. Where all Information & Labels are Located
+
+To customize the static copy or text, refer to the following locations:
+
+### General Information (in `index.html`):
+* **Top-Left Logo Name**: Inside `<header>` under `<!-- Brand / Logo -->` (Line 132).
+* **Biography and Title**: Inside `<section id="section-home">` under the `<!-- Right: Hero text -->` header block (Lines 176–188).
+* **Available for Freelance Label**: Located in the Hero section (Line 172) inside the greeting chip.
+* **Technology Skills Badges**: Inside `<section id="section-home">` under the `<!-- Skills / Technologies strip -->` block (Lines 224–239).
+* **LinkedIn and GitHub Links**:
+  * In the Home social links block (Lines 198–221).
+  * In the Footer section (Lines 340–344).
+* **Contact Information & Address Details**: Under `<section id="section-contact">` inside the `<aside>` element (Lines 305–334).
+* **CV Download Button**: In the Hero CTA group (Lines 180–186), identified by `id="btn-download-cv"`.
+
+### Dynamic Project Information (in `projects.json`):
+* **Project Name**: Stored under the `"title"` property.
+* **Badge / Label Status**: Stored under the `"label"` property (valid values: `"Production"`, `"MVP"`, or `"Personal Project"` to display corresponding colors).
+* **Project Description**: Stored under the `"description"` property.
+* **YouTube Video Link**: Stored under the `"video_url"` property.
+* **Tech Badges list**: Stored under the `"tags"` array property.
+
+### Dynamic Blog Information (in `posts.json`):
+* **Post Date**: Stored under the `"date"` property.
+* **Reading Time**: Stored under the `"reading_time"` property.
+* **Post Title**: Stored under the `"title"` property.
+* **Short Description**: Stored under the `"introduction"` property.
+* **Slug**: Stored under the `"slug"` property (used for routing/URLs later).
+* **Full Article Text**: Stored under the `"content"` property.
+
+---
+
+## 3. How to Modify and Add Content
+
+Because the portfolio is data-driven, you do not need to modify the HTML to add projects or blog posts. You only edit the JSON files.
+
+### A. How to Modify Projects:
+1. Open `projects.json`.
+2. Add a new object inside the main array:
+   ```json
+   {
+     "title": "Your Project Title",
+     "label": "Production", 
+     "description": "A detailed description explaining what your project does.",
+     "video_url": "https://www.youtube.com/watch?v=VIDEO_ID",
+     "tags": ["React", "Node.js", "MongoDB"],
+     "slug": "unique-url-slug"
+   }
+   ```
+3. **If you do not have a video yet**: Set `"video_url": ""` (empty string), and the site will display the beautiful "Demo coming soon" placeholder.
+4. Save the file. The next time you open the website, the portfolio will automatically render the new card.
+
+### B. How to Modify Blog Posts:
+1. Open `posts.json`.
+2. Add a new post object inside the main array:
+   ```json
+   {
+     "date": "June 12, 2026",
+     "reading_time": "6 min read",
+     "title": "How to Structure JSON Databases for Static Sites",
+     "introduction": "A brief two-line summary of what the article discusses. This text is displayed in the main blog feed list.",
+     "slug": "structuring-json-static-sites",
+     "content": "Full markdown or HTML content here..."
+   }
+   ```
+3. Save the file. The blog feed will update instantly.
+
+---
+
+## 4. How to Send/Apply your CV and Profile Picture
+
+Both assets are located inside the `info` folder:
+1. **CV**: Linked directly to `info/CV_EZEQUIEL_MOLINA.pdf`. Clicking the download button automatically downloads this PDF file.
+2. **Profile Picture**: Configured to render the image `info/profile_picture.jpeg` inside a circular clipping frame. The image has been scaled and positioned to center the crop on your hair/face.
+
+---
+
+## 5. Technical Code Explanations
+
+### Navigation (SPA Tab Switching)
+In `app.js`, the `switchSection(targetId)` function manages views:
+1. It loops through all sections.
+2. For the target section, it removes the class `hidden` and triggers a browser repaint to restart the slide-up animation class `section-enter`.
+3. It hides all other sections by adding the `hidden` class.
+4. It updates the active styling on the navbar buttons.
+
+### Asynchronous Data Loading
+The `loadProjects()` and `loadPosts()` functions:
+1. Execute concurrently on the `DOMContentLoaded` event.
+2. Use `await fetch('./projects.json')` to retrieve the database files.
+3. Iterate (loop) through the data arrays, generate the HTML blocks, and append them directly to `#projects-grid` and `#blog-list` DOM elements, instantly replacing the CSS animated skeleton loader elements.

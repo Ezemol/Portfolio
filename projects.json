@@ -1,0 +1,56 @@
+[
+  {
+    "lang": "en",
+    "title": "E-Commerce Platform",
+    "label": "Production",
+    "description": "A fully featured e-commerce solution built from scratch with a custom Django REST API backend and a dynamic vanilla JavaScript frontend. Features include product catalog, cart management, Stripe payment integration, and a full admin dashboard for order and inventory management.",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "tags": ["Python", "Django", "Django REST Framework", "JavaScript", "Stripe API", "PostgreSQL", "Docker"],
+    "slug": "ecommerce-platform"
+  },
+  {
+    "lang": "en",
+    "title": "Task Manager App",
+    "label": "MVP",
+    "description": "A productivity-focused task management application with drag-and-drop Kanban boards, team collaboration features, real-time updates via WebSockets, and detailed analytics dashboards for tracking project progress and team performance over time.",
+    "video_url": "https://youtu.be/dQw4w9WgXcQ",
+    "tags": ["Python", "Django", "Channels", "WebSockets", "React", "PostgreSQL", "Redis"],
+    "slug": "task-manager-app"
+  },
+  {
+    "lang": "en",
+    "title": "Personal Finance Dashboard",
+    "label": "Personal Project",
+    "description": "A data-driven personal finance tracker that connects to bank APIs, automatically categorizes transactions using a lightweight ML model, and generates beautiful visual reports and spending forecasts to help users gain control over their finances.",
+    "video_url": "",
+    "tags": ["Python", "FastAPI", "Pandas", "Scikit-learn", "Chart.js", "SQLite", "Plaid API"],
+    "slug": "finance-dashboard"
+  },
+  {
+    "lang": "es",
+    "title": "Plataforma de E-Commerce",
+    "label": "Producción",
+    "description": "Una solución completa de comercio electrónico construida desde cero con un backend de API REST personalizado en Django y un frontend dinámico en JavaScript vanilla. Incluye catálogo de productos, gestión de carrito, integración de pagos con Stripe y un panel de administración completo para gestionar pedidos e inventario.",
+    "video_url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    "tags": ["Python", "Django", "Django REST Framework", "JavaScript", "Stripe API", "PostgreSQL", "Docker"],
+    "slug": "ecommerce-platform"
+  },
+  {
+    "lang": "es",
+    "title": "Aplicación de Gestión de Tareas",
+    "label": "MVP",
+    "description": "Una aplicación de gestión de tareas enfocada en la productividad con tableros Kanban interactivos, funciones de colaboración en equipo, actualizaciones en tiempo real mediante WebSockets y paneles de análisis detallados para realizar el seguimiento del progreso del proyecto y el rendimiento del equipo a lo largo del tiempo.",
+    "video_url": "https://youtu.be/dQw4w9WgXcQ",
+    "tags": ["Python", "Django", "Channels", "WebSockets", "React", "PostgreSQL", "Redis"],
+    "slug": "task-manager-app"
+  },
+  {
+    "lang": "es",
+    "title": "Panel de Finanzas Personales",
+    "label": "Proyecto Personal",
+    "description": "Un rastreador de finanzas personales basado en datos que se conecta a APIs bancarias, categoriza automáticamente las transacciones mediante un modelo de aprendizaje automático liviano y genera hermosos informes visuales y pronósticos de gastos para ayudar a los usuarios a tomar el control de sus finanzas.",
+    "video_url": "",
+    "tags": ["Python", "FastAPI", "Pandas", "Scikit-learn", "Chart.js", "SQLite", "Plaid API"],
+    "slug": "finance-dashboard"
+  }
+]
