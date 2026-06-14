@@ -524,6 +524,19 @@ function initContactForm() {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    const btn = document.getElementById('btn-send-message');
+    const originalContent = btn.innerHTML;
+
+    // Obtener respuesta de reCAPTCHA
+    const recaptchaToken = typeof grecaptcha !== 'undefined' ? grecaptcha.getResponse() : '';
+    if (!recaptchaToken) {
+      const captchaAlert = currentLanguage === 'es'
+        ? 'Por favor, completa la verificación "No soy un robot".'
+        : 'Please complete the "I\'m not a robot" verification.';
+      alert(captchaAlert);
+      return;
+    }
+
     const nameInput = document.getElementById('contact-name');
     const emailInput = document.getElementById('contact-email');
     const messageInput = document.getElementById('contact-message');
@@ -532,10 +545,7 @@ function initContactForm() {
     const email = emailInput ? emailInput.value : '';
     const message = messageInput ? messageInput.value : '';
 
-    const btn = document.getElementById('btn-send-message');
-    const originalContent = btn.innerHTML;
     btn.disabled = true;
-
     const sendingText = currentLanguage === 'es' ? 'Enviando...' : 'Sending...';
     btn.innerHTML = `
       <svg class="animate-spin w-4 h-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
@@ -566,7 +576,8 @@ function initContactForm() {
           template_params: {
             from_name: name,
             reply_to: email,
-            message: message
+            message: message,
+            "g-recaptcha-response": recaptchaToken
           }
         })
       });
@@ -581,6 +592,9 @@ function initContactForm() {
       console.error('[EmailJS] Error al enviar el correo:', error);
       btn.disabled = false;
       btn.innerHTML = originalContent;
+      if (typeof grecaptcha !== 'undefined') {
+        grecaptcha.reset();
+      }
       const errorAlert = currentLanguage === 'es'
         ? 'No se pudo enviar el mensaje. Por favor intenta de nuevo.'
         : 'Failed to send message. Please try again.';
