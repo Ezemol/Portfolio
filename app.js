@@ -83,8 +83,19 @@ function buildProjectCard(project) {
   const embedUrl   = parseYouTubeEmbed(video_url);
   const labelClass = getLabelClasses(label);
 
-  const btnWatchDemo = currentLanguage === 'es' ? 'Ver Demo' : 'Watch Demo';
   const soonText = currentLanguage === 'es' ? 'Demo muy pronto' : 'Demo coming soon';
+  const isYouTube = !!embedUrl;
+  const btnText = isYouTube
+    ? (currentLanguage === 'es' ? 'Ver Demo' : 'Watch Demo')
+    : (currentLanguage === 'es' ? 'Visitar Sitio' : 'Visit Site');
+
+  const btnIcon = isYouTube
+    ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
+       </svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+       </svg>`;
 
   // ── Video / Placeholder block ──────────────────────────────
   let mediaBlock;
@@ -135,20 +146,18 @@ function buildProjectCard(project) {
     `<span class="tech-badge px-2.5 py-1 text-[11px] font-semibold bg-slate-950 text-slate-400 rounded-lg border border-slate-800/80 cursor-default hover:bg-blue-950 hover:text-blue-400 hover:border-blue-900/50 transition-all duration-200">${tag}</span>`
   ).join('');
 
-  // ── Watch Demo button (only shown when a video_url exists) ─
+  // ── Action Button (either Visit Site or Watch Demo) ─────────
   const watchDemoBtn = video_url
     ? `<a
         href="${video_url}"
         target="_blank"
         rel="noopener noreferrer"
-        class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white text-xs font-semibold px-4.5 py-2.5 rounded-xl shadow-md hover:shadow-blue-100 hover:shadow-lg transition-all duration-200"
-        aria-label="${btnWatchDemo} ${title}">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
-        </svg>
-        ${btnWatchDemo}
+        class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white text-xs font-semibold px-8 py-2.5 rounded-xl shadow-md hover:shadow-blue-100 hover:shadow-lg transition-all duration-200"
+        aria-label="${btnText} ${title}">
+        ${btnIcon}
+        ${btnText}
       </a>`
-    : `<span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 px-4 py-2.5 rounded-xl border border-slate-800 bg-slate-950 cursor-default">
+    : `<span class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 px-8 py-2.5 rounded-xl border border-slate-800 bg-slate-950 cursor-default">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
@@ -255,6 +264,16 @@ async function loadProjects() {
       container.insertAdjacentHTML('beforeend', buildProjectCard(project));
     });
 
+    // Append empty state placeholder (initially hidden)
+    const emptyProjectsText = currentLanguage === 'es'
+      ? '¡Próximamente más proyectos en esta categoría!'
+      : 'More projects in this category coming soon!';
+    container.insertAdjacentHTML('beforeend', `
+      <div id="projects-empty-message" class="col-span-full hidden flex-col items-center justify-center py-20 text-center select-none animate-fade-in">
+        <p class="text-slate-400 text-sm font-medium">${emptyProjectsText}</p>
+      </div>
+    `);
+
   } catch (err) {
     console.error('[Portfolio] Failed to load projects.json:', err);
     const errorTitle = currentLanguage === 'es' ? 'No se pudieron cargar los proyectos.' : "Couldn't load projects.";
@@ -308,6 +327,16 @@ async function loadPosts() {
     posts.forEach(post => {
       container.insertAdjacentHTML('beforeend', buildBlogRow(post));
     });
+
+    // Append empty state placeholder (initially hidden)
+    const emptyPostsText = currentLanguage === 'es'
+      ? '¡Próximamente más artículos en esta categoría!'
+      : 'More articles in this category coming soon!';
+    container.insertAdjacentHTML('beforeend', `
+      <div id="blog-empty-message" class="hidden flex-col items-center justify-center py-20 text-center select-none w-full animate-fade-in">
+        <p class="text-slate-400 text-sm font-medium">${emptyPostsText}</p>
+      </div>
+    `);
 
   } catch (err) {
     console.error('[Portfolio] Failed to load posts.json:', err);
@@ -637,21 +666,39 @@ function initFilterPills() {
 
       const filterValue = pill.dataset.filter;
       const projects = document.querySelectorAll('#projects-grid .card-hover');
+      let visibleCount = 0;
 
       projects.forEach(project => {
         const label = project.dataset.label;
+        let isVisible = false;
         if (filterValue === 'all') {
-          project.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'production' && (label === 'Production' || label === 'Producción')) {
-          project.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'mvp' && label === 'MVP') {
-          project.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'personal' && (label === 'Personal Project' || label === 'Proyecto Personal')) {
+          isVisible = true;
+        }
+
+        if (isVisible) {
           project.classList.remove('hidden');
+          visibleCount++;
         } else {
           project.classList.add('hidden');
         }
       });
+
+      const emptyMsg = document.getElementById('projects-empty-message');
+      if (emptyMsg) {
+        if (visibleCount === 0) {
+          emptyMsg.classList.remove('hidden');
+          emptyMsg.classList.add('flex');
+        } else {
+          emptyMsg.classList.add('hidden');
+          emptyMsg.classList.remove('flex');
+        }
+      }
     });
   });
 }
@@ -667,23 +714,41 @@ function initBlogFilterPills() {
 
       const filterValue = pill.dataset.filter;
       const posts = document.querySelectorAll('#blog-list .blog-row');
+      let visibleCount = 0;
 
       posts.forEach(post => {
         const category = post.dataset.category;
+        let isVisible = false;
         if (filterValue === 'all') {
-          post.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'opinion' && (category === 'Opinion' || category === 'Opinión')) {
-          post.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'personal' && category === 'Personal') {
-          post.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'engineering' && (category === 'Engineering' || category === 'Ingeniería')) {
-          post.classList.remove('hidden');
+          isVisible = true;
         } else if (filterValue === 'freelance' && category === 'Freelance') {
+          isVisible = true;
+        }
+
+        if (isVisible) {
           post.classList.remove('hidden');
+          visibleCount++;
         } else {
           post.classList.add('hidden');
         }
       });
+
+      const emptyMsg = document.getElementById('blog-empty-message');
+      if (emptyMsg) {
+        if (visibleCount === 0) {
+          emptyMsg.classList.remove('hidden');
+          emptyMsg.classList.add('flex');
+        } else {
+          emptyMsg.classList.add('hidden');
+          emptyMsg.classList.remove('flex');
+        }
+      }
     });
   });
 }
@@ -696,7 +761,7 @@ let currentLanguage = localStorage.getItem('portfolio-lang') || 'es';
 const TRANSLATIONS = {
   es: {
     "nav-home": "Inicio",
-    "nav-portfolio": "Portafolio",
+    "nav-portfolio": "Proyectos",
     "nav-blog": "Blog",
     "nav-contact": "Contacto",
     "greeting-available": "Disponible para freelance",
@@ -736,7 +801,7 @@ const TRANSLATIONS = {
   },
   en: {
     "nav-home": "Home",
-    "nav-portfolio": "Portfolio",
+    "nav-portfolio": "Projects",
     "nav-blog": "Blog",
     "nav-contact": "Contact",
     "greeting-available": "Available for freelance",
@@ -838,16 +903,17 @@ function changeLanguage(lang) {
 ───────────────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── Language Toggle buttons ─────────────────────────────────
   const esBtn = document.getElementById('lang-es-btn');
   const enBtn = document.getElementById('lang-en-btn');
   const mobileEsBtn = document.getElementById('mobile-lang-es-btn');
   const mobileEnBtn = document.getElementById('mobile-lang-en-btn');
 
-  if (esBtn) esBtn.addEventListener('click', () => changeLanguage('es'));
-  if (enBtn) enBtn.addEventListener('click', () => changeLanguage('en'));
-  if (mobileEsBtn) mobileEsBtn.addEventListener('click', () => changeLanguage('es'));
-  if (mobileEnBtn) mobileEnBtn.addEventListener('click', () => changeLanguage('en'));
+  const toggleLang = () => changeLanguage(currentLanguage === 'es' ? 'en' : 'es');
+
+  if (esBtn) esBtn.addEventListener('click', toggleLang);
+  if (enBtn) enBtn.addEventListener('click', toggleLang);
+  if (mobileEsBtn) mobileEsBtn.addEventListener('click', toggleLang);
+  if (mobileEnBtn) mobileEnBtn.addEventListener('click', toggleLang);
 
   // Translate static texts initially
   translatePage();
