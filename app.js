@@ -798,6 +798,26 @@ const TRANSLATIONS = {
     "filter-personal-cat": "Personal",
     "filter-engineering": "Ingeniería",
     "filter-freelance": "Freelance",
+    "about-title": "Sobre mí",
+    "about-subtitle": "Una mirada a mi trayectoria, estudios e intereses personales.",
+    "about-edu-title": "Estudios",
+    "about-edu-degree": "Ingeniería en Sistemas de Información",
+    "about-edu-school": "UTN FRC — Promedio de 1° año: 8.78",
+    "about-edu-desc": "Finalicé el primer año de la carrera con un promedio de 8.78. El cursar materias tan rigurosas me ha brindado una gran capacidad de razonamiento lógico, resolución de problemas y una fuerte disciplina.",
+    "about-lang-title": "Idiomas",
+    "about-lang-es": "Español",
+    "about-lang-level-native": "Nativo",
+    "about-lang-en": "Inglés",
+    "about-lang-level-bilingual": "Bilingüe",
+    "about-lang-pt": "Portugués",
+    "about-lang-level-conversational": "Intermedio / Avanzado",
+    "about-hobbies-title": "Hobbies e Intereses",
+    "about-hobbies-desc": "En mis tiempos libres disfruto mucho de la lectura, tanto de libros de entretenimiento como de desarrollo personal, negocios e investigación. También, una de mis prioridades es entrenar calistenia diariamente. En cuanto a mis hobbies, toco la guitarra, me apasionan los juegos de lógica (como el ajedrez y el sudoku, entre otros) y disfruto ir al lago a hacer windsurf. Además, formo parte del coro de la iglesia de mi pueblo, aportando mi grano de arena para hacer la voluntad de Dios.",
+    "hobby-reading": "📚 Leer",
+    "hobby-calisthenics": "💪 Calistenia",
+    "hobby-guitar": "🎸 Guitarra",
+    "hobby-chess": "♟️ Ajedrez",
+    "hobby-windsurf": "🏄‍♂️ Windsurf",
   },
   en: {
     "nav-home": "Home",
@@ -838,6 +858,26 @@ const TRANSLATIONS = {
     "filter-personal-cat": "Personal",
     "filter-engineering": "Engineering",
     "filter-freelance": "Freelance",
+    "about-title": "About Me",
+    "about-subtitle": "A look at my background, studies, and personal interests.",
+    "about-edu-title": "Education",
+    "about-edu-degree": "Information Systems Engineering",
+    "about-edu-school": "UTN FRC — First Year GPA: 8.78",
+    "about-edu-desc": "Completed the first year of my degree with a GPA of 8.78. Managing rigorous coursework has built strong analytical thinking, problem-solving skills, and deep engineering discipline.",
+    "about-lang-title": "Languages",
+    "about-lang-es": "Spanish",
+    "about-lang-level-native": "Native",
+    "about-lang-en": "English",
+    "about-lang-level-bilingual": "Bilingual",
+    "about-lang-pt": "Portuguese",
+    "about-lang-level-conversational": "Intermediate / Advanced",
+    "about-hobbies-title": "Hobbies & Interests",
+    "about-hobbies-desc": "In my free time, I really enjoy reading, including entertainment, personal development, business, and research books. Training calisthenics daily is also one of my top priorities. As for my hobbies, I play the guitar, love logic games (such as chess and sudoku, among others), and enjoy going to the lake to go windsurfing. I also belong to my town's church choir, doing my part to serve and do God's will.",
+    "hobby-reading": "📚 Reading",
+    "hobby-calisthenics": "💪 Calisthenics",
+    "hobby-guitar": "🎸 Guitar",
+    "hobby-chess": "♟️ Chess",
+    "hobby-windsurf": "🏄‍♂️ Windsurfing",
   }
 };
 
@@ -875,6 +915,19 @@ function translatePage() {
       btn.className = "text-[10px] font-bold px-2 py-0.5 rounded-full text-slate-400 hover:text-slate-100 transition-all duration-200";
     }
   });
+
+  // Update Languages highlight based on active language
+  const langEsEl = document.getElementById('lang-name-es');
+  const langEnEl = document.getElementById('lang-name-en');
+  if (langEsEl && langEnEl) {
+    if (currentLanguage === 'es') {
+      langEsEl.className = "font-semibold text-blue-400 transition-colors duration-200";
+      langEnEl.className = "font-semibold text-slate-200 transition-colors duration-200";
+    } else {
+      langEsEl.className = "font-semibold text-slate-200 transition-colors duration-200";
+      langEnEl.className = "font-semibold text-blue-400 transition-colors duration-200";
+    }
+  }
 }
 
 function changeLanguage(lang) {
