@@ -58,14 +58,17 @@ function parseYouTubeEmbed(rawUrl) {
    UTILITY: Get badge color classes per project label
 ───────────────────────────────────────────────────────────── */
 function getLabelClasses(label) {
-  const map = {
-    'Production':       'bg-emerald-950/40 text-emerald-400 border-emerald-900/50',
-    'Producción':       'bg-emerald-950/40 text-emerald-400 border-emerald-900/50',
-    'MVP':              'bg-amber-950/40 text-amber-400 border-amber-900/50',
-    'Personal Project': 'bg-indigo-950/40 text-indigo-400 border-indigo-900/50',
-    'Proyecto Personal':'bg-indigo-950/40 text-indigo-400 border-indigo-900/50',
-  };
-  return map[label] || 'bg-slate-900 text-slate-400 border-slate-800';
+  const normalized = label || '';
+  if (normalized.includes('Production') || normalized.includes('Producción')) {
+    return 'bg-emerald-950/40 text-emerald-400 border-emerald-900/50';
+  }
+  if (normalized.includes('MVP')) {
+    return 'bg-amber-950/40 text-amber-400 border-amber-900/50';
+  }
+  if (normalized.includes('Personal') || normalized.includes('Personal Project') || normalized.includes('Proyecto Personal')) {
+    return 'bg-indigo-950/40 text-indigo-400 border-indigo-900/50';
+  }
+  return 'bg-slate-900 text-slate-400 border-slate-800';
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -78,28 +81,54 @@ function getLabelClasses(label) {
      • "Watch Demo" button → opens raw video_url in new tab
    ───────────────────────────────────────────────────────────── */
 function buildProjectCard(project) {
-  const { title, label, description, video_url, preview_video, tags = [] } = project;
+  const { title, label, description, live_url, video_url, preview_video, preview_image, tags = [] } = project;
 
-  const embedUrl   = parseYouTubeEmbed(video_url);
+  const primaryLink = live_url || video_url;
+  const embedUrl = video_url ? parseYouTubeEmbed(video_url) : null;
   const labelClass = getLabelClasses(label);
 
   const soonText = currentLanguage === 'es' ? 'Demo muy pronto' : 'Demo coming soon';
-  const isYouTube = !!embedUrl;
-  const btnText = isYouTube
-    ? (currentLanguage === 'es' ? 'Ver Demo' : 'Watch Demo')
-    : (currentLanguage === 'es' ? 'Visitar Sitio' : 'Visit Site');
+  const isYouTube = primaryLink && !!parseYouTubeEmbed(primaryLink);
+  
+  const btnText = live_url
+    ? (currentLanguage === 'es' ? 'Visitar Sitio' : 'Visit Site')
+    : (primaryLink
+        ? (currentLanguage === 'es' ? 'Ver Demo' : 'Watch Demo')
+        : soonText);
 
-  const btnIcon = isYouTube
-    ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
-       </svg>`
-    : `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
+  const btnIcon = (live_url || !isYouTube)
+    ? `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+       </svg>`
+    : `<svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
        </svg>`;
 
-  // ── Video / Placeholder block ──────────────────────────────
+  // ── Video / Image / Placeholder block ────────────────────────
   let mediaBlock;
-  if (preview_video) {
+  if (preview_image) {
+    mediaBlock = `
+      <div class="relative w-full aspect-video bg-black overflow-hidden group">
+        <img
+          class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          src="${preview_image}"
+          alt="${title} — Preview"
+          loading="lazy">
+        ${video_url ? `
+          <a
+            href="${video_url}"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="absolute bottom-3 right-3 flex items-center gap-1.5 bg-slate-950/85 hover:bg-blue-600 text-slate-200 hover:text-white px-3 py-1.5 rounded-full backdrop-blur-sm border border-slate-800/80 shadow-lg transition-all duration-200 text-[11px] font-semibold"
+            aria-label="${currentLanguage === 'es' ? 'Ver Video Demo' : 'Watch Demo Video'}">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 fill-currentColor text-red-500 animate-pulse" viewBox="0 0 24 24">
+              <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/>
+            </svg>
+            <span>Demo Video</span>
+          </a>
+        ` : ''}
+      </div>`;
+  } else if (preview_video) {
     // Responsive local video autoplaying preview loop
     mediaBlock = `
       <div class="relative w-full aspect-video bg-black overflow-hidden">
@@ -147,9 +176,9 @@ function buildProjectCard(project) {
   ).join('');
 
   // ── Action Button (either Visit Site or Watch Demo) ─────────
-  const watchDemoBtn = video_url
+  const watchDemoBtn = primaryLink
     ? `<a
-        href="${video_url}"
+        href="${primaryLink}"
         target="_blank"
         rel="noopener noreferrer"
         class="inline-flex items-center gap-2 bg-blue-500 hover:bg-blue-600 active:bg-blue-700 text-white text-xs font-semibold px-8 py-2.5 rounded-xl shadow-md hover:shadow-blue-100 hover:shadow-lg transition-all duration-200"
@@ -669,15 +698,15 @@ function initFilterPills() {
       let visibleCount = 0;
 
       projects.forEach(project => {
-        const label = project.dataset.label;
+        const label = project.dataset.label || '';
         let isVisible = false;
         if (filterValue === 'all') {
           isVisible = true;
-        } else if (filterValue === 'production' && (label === 'Production' || label === 'Producción')) {
+        } else if (filterValue === 'production' && (label.includes('Production') || label.includes('Producción'))) {
           isVisible = true;
-        } else if (filterValue === 'mvp' && label === 'MVP') {
+        } else if (filterValue === 'mvp' && label.includes('MVP')) {
           isVisible = true;
-        } else if (filterValue === 'personal' && (label === 'Personal Project' || label === 'Proyecto Personal')) {
+        } else if (filterValue === 'personal' && (label.includes('Personal') || label.includes('Proyecto Personal'))) {
           isVisible = true;
         }
 
